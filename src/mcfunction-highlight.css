@@ -1,0 +1,62 @@
+.mcfunction-viewer {
+    /* 基础样式 */
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 1.5;
+    tab-size: 4;
+    hyphens: none;
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    border-radius: 0.3em;
+    position: relative;
+}
+
+/* 语法高亮类 */
+.mcfunction-viewer .command { color: #569cd6; font-weight: bold; }
+.mcfunction-viewer .selector { color: #4ec9b0; }
+.mcfunction-viewer .coordinates { color: #b5cea8; }
+.mcfunction-viewer .string { color: #ce9178; }
+.mcfunction-viewer .comment { color: #6a9955; }
+.mcfunction-viewer .number { color: #b5cea8; }
+.mcfunction-viewer .execute-modifier { color: #c586c0; }
+.mcfunction-viewer .execute-condition { color: #d16969; }
+.mcfunction-viewer .parameter { color: #9cdcfe; }
+.mcfunction-viewer .dimension { color: #4ec9b0; }
+.mcfunction-viewer .boolean { color: #569cd6; }
+
+/* 添加复制按钮样式 */
+.mcfunction-copy-button {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    padding: 0.4em 0.8em;
+    background: #333;
+    border: 1px solid #666;
+    border-radius: 0.3em;
+    color: #d4d4d4;
+    font-size: 0.8em;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.mcfunction-copy-button:hover {
+    background: #444;
+}
+
+.mcfunction-copy-button.success {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+/* 当鼠标悬停在代码块上时显示按钮 */
+.mcfunction-viewer:hover .mcfunction-copy-button {
+    opacity: 1;
+} 

@@ -1,0 +1,31 @@
+{
+  "name": "mcfunction-highlight",
+  "version": "1.0.2",
+  "description": "MCFunction 语法高亮器",
+  "main": "dist/mcfunction-highlight.min.js",
+  "style": "dist/mcfunction-highlight.min.css",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "webpack --mode production",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "minecraft",
+    "mcfunction",
+    "syntax",
+    "highlighter"
+  ],
+  "author": "lvjiajjj123",
+  "license": "MIT",
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "mini-css-extract-plugin": "^2.9.2",
+    "terser-webpack-plugin": "^5.3.10",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

@@ -1,0 +1,135 @@
+import './mcfunction-highlight.css';
+
+const MCFunctionHighlight = {
+    init() {
+        // 只高亮 language-mcfunction 的代码块
+        this.highlightAll();
+        this.observeDOM();
+    },
+
+    highlightAll() {
+        // 只查找 pre > code.language-mcfunction 元素
+        document.querySelectorAll('pre > code.language-mcfunction').forEach(element => {
+            this.highlightElement(element);
+        });
+    },
+
+    highlightElement(element) {
+        const code = element.textContent;
+        const highlighted = this.highlight(code);
+
+        // 创建包装器，使用 mcfunction-viewer 类
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mcfunction-viewer';
+        wrapper.innerHTML = highlighted;
+
+        // 添加复制按钮
+        const copyButton = document.createElement('button');
+        copyButton.className = 'mcfunction-copy-button';
+        copyButton.textContent = '复制';
+        copyButton.addEventListener('click', () => this.copyCode(code, copyButton));
+        wrapper.appendChild(copyButton);
+
+        // 替换原始元素
+        const pre = element.parentNode;
+        pre.innerHTML = ''; // 清空 pre 标签
+        pre.appendChild(wrapper);
+    },
+
+    highlight(code) {
+        return code.split('\n').map(line => {
+            // 处理空行
+            if (!line.trim()) {
+                return '<div>&nbsp;</div>';
+            }
+
+            // 处理注释
+            if (line.trim().startsWith('#')) {
+                return `<div class="comment">${line}</div>`;
+            }
+
+            // 替换各种语法元素
+            line = line
+                // execute子命令
+                .replace(/\b(execute|run)\b/g,
+                    match => `<span class="command">${match}</span>`)
+                // execute修饰子命令
+                .replace(/\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g,
+                    match => `<span class="execute-modifier">${match}</span>`)
+                // execute条件子命令
+                .replace(/\b(if|unless)\b/g,
+                    match => `<span class="execute-condition">${match}</span>`)
+                // 其他命令
+                .replace(/\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp)\b/g,
+                    match => `<span class="command">${match}</span>`)
+                // 选择器
+                .replace(/@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|nbt|rotation|pitch|yaw)=[^\]]*)*\])?/g,
+                    match => `<span class="selector">${match}</span>`)
+                // 坐标
+                .replace(/(?:^|\s)([~^][-\d]*\.?\d*)/g,
+                    (match, coord) => match.replace(coord, `<span class="coordinates">${coord}</span>`))
+                // 数字和范围
+                .replace(/\b(\d+(?:\.\.\d+)?)\b/g,
+                    match => `<span class="number">${match}</span>`)
+                // 布尔值
+                .replace(/\b(true|false)\b/g,
+                    match => `<span class="boolean">${match}</span>`)
+                // 选择器参数和execute参数
+                .replace(/\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|sort|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g,
+                    match => `<span class="parameter">${match}</span>`)
+                // 维度ID
+                .replace(/\b(overworld|the_nether|the_end)\b/g,
+                    match => `<span class="dimension">${match}</span>`)
+                // 方块ID和其他字符串
+                .replace(/\b(grass_block|stone|speed|glowing|true)\b/g,
+                    match => `<span class="string">${match}</span>`);
+
+            return `<div>${line}</div>`;
+        }).join('');
+    },
+
+    observeDOM() {
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === 1) {
+                        // 只查找新添加节点中的 pre > code.language-mcfunction 元素
+                        const elements = node.querySelectorAll('pre > code.language-mcfunction');
+                        elements.forEach(element => this.highlightElement(element));
+                    }
+                });
+            });
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    },
+
+    // 添加复制功能
+    async copyCode(code, button) {
+        try {
+            await navigator.clipboard.writeText(code);
+            // 显示成功状态
+            button.textContent = '已复制！';
+            button.classList.add('success');
+
+            // 2秒后恢复原状
+            setTimeout(() => {
+                button.textContent = '复制';
+                button.classList.remove('success');
+            }, 2000);
+        } catch (err) {
+            console.error('复制失败:', err);
+            button.textContent = '复制失败';
+
+            // 2秒后恢复原状
+            setTimeout(() => {
+                button.textContent = '复制';
+            }, 2000);
+        }
+    }
+};
+
+export default MCFunctionHighlight; 
