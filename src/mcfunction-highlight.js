@@ -126,6 +126,7 @@ const MCFunctionHighlight = {
 
 if (typeof window !== 'undefined') {
     window.MCFunctionHighlight = MCFunctionHighlight;
+    MCFunctionHighlight.init();
 }
 
 export default MCFunctionHighlight;

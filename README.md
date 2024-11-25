@@ -1,5 +1,6 @@
 # MCFunction 语法高亮工具使用指南 | MCFunction Syntax Highlighter Usage Guide
 
+# 项目处于测试版，仍在开发！| The project is in beta testing and is still under development!
 在线演示 | Online Demo: [https://1.lvjia.cc/](https://1.lvjia.cc/)
 
 ## 安装 | Installation
@@ -46,7 +47,7 @@ const codeElement = document.querySelector('pre > code.language-mcfunction');
 MCFunctionHighlight.default.highlightElement(codeElement);
 
 // 高亮所有元素 | Highlight all elements
-MCFunctionHighlight.default.highlightAll();
+window.MCFunctionHighlight?.highlightAll();
 ```
 
 ### 支持的语法高亮 | Supported Syntax Highlighting
