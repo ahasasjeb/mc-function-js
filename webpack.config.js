@@ -12,6 +12,7 @@ module.exports = {
     filename: '[name].min.js',
     library: 'MCFunctionHighlight',
     libraryTarget: 'umd',
+    libraryExport: 'default',
     globalObject: 'this'
   },
   module: {

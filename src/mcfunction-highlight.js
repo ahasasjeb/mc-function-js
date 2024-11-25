@@ -124,4 +124,8 @@ const MCFunctionHighlight = {
     }
 };
 
+if (typeof window !== 'undefined') {
+    window.MCFunctionHighlight = MCFunctionHighlight;
+}
+
 export default MCFunctionHighlight;
