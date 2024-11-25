@@ -125,8 +125,13 @@ const MCFunctionHighlight = {
 };
 
 if (typeof window !== 'undefined') {
-    window.MCFunctionHighlight = MCFunctionHighlight;
-    MCFunctionHighlight.init();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            MCFunctionHighlight.init();
+        });
+    } else {
+        MCFunctionHighlight.init();
+    }
 }
 
 export default MCFunctionHighlight;
