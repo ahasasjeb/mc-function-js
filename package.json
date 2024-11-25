@@ -20,6 +20,10 @@
   ],
   "author": "lvjiajjj123",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahasasjeb/mc-function-js"
+  },
   "devDependencies": {
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
