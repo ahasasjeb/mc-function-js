@@ -33,11 +33,9 @@ jobs:
 
       - name: Bump version and publish
         run: |
-
           CURRENT_VERSION=$(node -p "require('./package.json').version")
 
           if npm view mcfunction-highlight@$CURRENT_VERSION version &> /dev/null; then
-
             npm version patch -m "Bump version to %s"
             git push
             git push --tags
@@ -46,8 +44,4 @@ jobs:
           npm publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to NPM
-        run: npm publish
-        env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
