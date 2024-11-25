@@ -17,7 +17,7 @@
 <script>
     // 等待 DOM 加载完成后初始化 Initialize after DOM content loaded
     window.addEventListener('DOMContentLoaded', () => {
-        MCFunctionHighlight.default.init();
+        MCFunctionHighlight.init();
     });
 </script>
 ```
@@ -84,7 +84,7 @@ execute at @a in minecraft:the_end run setblock ~ ~-1 ~ minecraft:diamond_block<
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            MCFunctionHighlight.default.init();
+            MCFunctionHighlight.init();
         });
     </script>
 </body>
@@ -121,7 +121,7 @@ If you also use other syntax highlighting libraries (such as Prism. js or Highli
     hljs.highlightAll(); // 如果使用了 Highlight.js
     // Prism.js 会自动初始化
     window.addEventListener('DOMContentLoaded', () => {
-        MCFunctionHighlight.default.init();
+        MCFunctionHighlight.init();
     });
 </script>
 ```
