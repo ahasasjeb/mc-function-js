@@ -91,8 +91,8 @@ execute at @a in minecraft:the_end run setblock ~ ~-1 ~ minecraft:diamond_block<
 
 这个工具会自动监听 DOM 变化，所以动态添加的代码块也会自动高亮。
 The tool automatically monitors DOM changes, so dynamically added code blocks will be highlighted automatically.
-项目基于MIT许可证，你可以自由修改，这个项目未来应该也会有更新。
-The project is based on the MIT license, allowing you to freely modify it. It is expected that there will be updates to this project in the future.
+项目基于MIT许可证，你可以自由修改。
+The project is based on the MIT license, allowing you to freely modify it.
 
 ### 与其他语法高亮库共存 | Coexistence with Other Syntax Highlighters
 
