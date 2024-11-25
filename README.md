@@ -93,3 +93,36 @@ execute at @a in minecraft:the_end run setblock ~ ~-1 ~ minecraft:diamond_block<
 The tool automatically monitors DOM changes, so dynamically added code blocks will be highlighted automatically.
 项目基于MIT许可证，你可以自由修改，这个项目未来应该也会有更新。
 The project is based on the MIT license, allowing you to freely modify it. It is expected that there will be updates to this project in the future.
+
+### 与其他语法高亮库共存 | Coexistence with Other Syntax Highlighters
+
+If you also use other syntax highlighting libraries (such as Prism. js or Highlight. js) in your project, please load the scripts in the following order to avoid conflicts:
+如果你的项目中同时使用了其他语法高亮库（如 Prism.js 或 Highlight.js），请按照以下顺序加载脚本以避免冲突：
+
+```html
+<!-- 1. 首先加载其他语法高亮库的样式 First load other syntax highlighter styles -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" rel="stylesheet">
+
+<!-- 2. 然后加载 MCFunction 高亮样式 Then load MCFunction highlighter styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mcfunction-highlight/dist/mcfunction-highlight.min.css">
+
+<!-- 3. 加载其他语法高亮库的脚本 Load other syntax highlighter scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
+<!-- 4. 最后加载 MCFunction 高亮脚本 Finally load MCFunction highlighter script -->
+<script src="https://cdn.jsdelivr.net/npm/mcfunction-highlight/dist/mcfunction-highlight.min.js"></script>
+
+<script>
+    // 5. 初始化各个高亮库 Initialize all highlighters
+    hljs.highlightAll(); // 如果使用了 Highlight.js
+    // Prism.js 会自动初始化
+    window.addEventListener('DOMContentLoaded', () => {
+        MCFunctionHighlight.default.init();
+    });
+</script>
+```
+
+按照这个顺序加载可以尽量避免各个语法高亮库正常工作且互不干扰。
+Loading in this order can try to avoid the normal operation of various syntax highlighting libraries without interfering with each other.

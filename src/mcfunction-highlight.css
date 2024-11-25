@@ -1,5 +1,4 @@
 .mcfunction-viewer {
-    /* 基础样式 */
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     background: #1e1e1e;
     color: #d4d4d4;
@@ -13,12 +12,16 @@
     hyphens: none;
     padding: 1em;
     margin: .5em 0;
-    overflow: auto;
+    overflow: hidden;
     border-radius: 0.3em;
     position: relative;
 }
 
-/* 语法高亮类 */
+.mcfunction-content {
+    overflow: auto;
+    padding-right: 20px;
+}
+
 .mcfunction-viewer .command { color: #569cd6; font-weight: bold; }
 .mcfunction-viewer .selector { color: #4ec9b0; }
 .mcfunction-viewer .coordinates { color: #b5cea8; }
@@ -31,7 +34,6 @@
 .mcfunction-viewer .dimension { color: #4ec9b0; }
 .mcfunction-viewer .boolean { color: #569cd6; }
 
-/* 添加复制按钮样式 */
 .mcfunction-copy-button {
     position: absolute;
     top: 0.5em;
@@ -56,7 +58,6 @@
     border-color: #28a745;
 }
 
-/* 当鼠标悬停在代码块上时显示按钮 */
 .mcfunction-viewer:hover .mcfunction-copy-button {
     opacity: 1;
 } 

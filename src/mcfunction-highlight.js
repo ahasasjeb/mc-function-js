@@ -2,13 +2,11 @@ import './mcfunction-highlight.css';
 
 const MCFunctionHighlight = {
     init() {
-        // 只高亮 language-mcfunction 的代码块
         this.highlightAll();
         this.observeDOM();
     },
 
     highlightAll() {
-        // 只查找 pre > code.language-mcfunction 元素
         document.querySelectorAll('pre > code.language-mcfunction').forEach(element => {
             this.highlightElement(element);
         });
@@ -18,37 +16,37 @@ const MCFunctionHighlight = {
         const code = element.textContent;
         const highlighted = this.highlight(code);
 
-        // 创建包装器，使用 mcfunction-viewer 类
         const wrapper = document.createElement('div');
         wrapper.className = 'mcfunction-viewer';
-        wrapper.innerHTML = highlighted;
 
-        // 添加复制按钮
+        const content = document.createElement('div');
+        content.className = 'mcfunction-content';
+        content.innerHTML = highlighted;
+        wrapper.appendChild(content);
+
         const copyButton = document.createElement('button');
         copyButton.className = 'mcfunction-copy-button';
         copyButton.textContent = '复制';
         copyButton.addEventListener('click', () => this.copyCode(code, copyButton));
         wrapper.appendChild(copyButton);
 
-        // 替换原始元素
+
         const pre = element.parentNode;
-        pre.innerHTML = ''; // 清空 pre 标签
+        pre.innerHTML = '';
         pre.appendChild(wrapper);
     },
 
     highlight(code) {
         return code.split('\n').map(line => {
-            // 处理空行
+
             if (!line.trim()) {
                 return '<div>&nbsp;</div>';
             }
 
-            // 处理注释
             if (line.trim().startsWith('#')) {
                 return `<div class="comment">${line}</div>`;
             }
 
-            // 替换各种语法元素
             line = line
                 // execute子命令
                 .replace(/\b(execute|run)\b/g,
@@ -93,7 +91,6 @@ const MCFunctionHighlight = {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeType === 1) {
-                        // 只查找新添加节点中的 pre > code.language-mcfunction 元素
                         const elements = node.querySelectorAll('pre > code.language-mcfunction');
                         elements.forEach(element => this.highlightElement(element));
                     }
@@ -107,15 +104,12 @@ const MCFunctionHighlight = {
         });
     },
 
-    // 添加复制功能
+
     async copyCode(code, button) {
         try {
             await navigator.clipboard.writeText(code);
-            // 显示成功状态
             button.textContent = '已复制！';
             button.classList.add('success');
-
-            // 2秒后恢复原状
             setTimeout(() => {
                 button.textContent = '复制';
                 button.classList.remove('success');
@@ -123,8 +117,6 @@ const MCFunctionHighlight = {
         } catch (err) {
             console.error('复制失败:', err);
             button.textContent = '复制失败';
-
-            // 2秒后恢复原状
             setTimeout(() => {
                 button.textContent = '复制';
             }, 2000);
@@ -132,4 +124,4 @@ const MCFunctionHighlight = {
     }
 };
 
-export default MCFunctionHighlight; 
+export default MCFunctionHighlight;

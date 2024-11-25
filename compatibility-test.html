@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>语法高亮兼容性测试</title>
+
+    <!-- Prism.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Highlight.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" rel="stylesheet" />
+
+    <!-- MCFunction 高亮 -->
+    <link href="dist/mcfunction-highlight.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: Arial, sans-serif;
+            padding: 2em;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin: 2em 0;
+            padding: 1em;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #fff;
+        }
+
+        .library-label {
+            display: inline-block;
+            padding: 0.2em 0.5em;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-left: 1em;
+        }
+
+        .prism {
+            background: #673ab7;
+            color: white;
+        }
+
+        .highlight {
+            background: #e91e63;
+            color: white;
+        }
+
+        .mcfunction {
+            background: #4caf50;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>语法高亮兼容性测试</h1>
+    <p>本页面测试MCFunction高亮与Prism.js和Highlight.js的兼容性。</p>
+
+    <div class="test-section">
+        <h2>MCFunction 代码 <span class="library-label mcfunction">MCFunction</span></h2>
+        <pre><code class="language-mcfunction">
+# 这是一个MCFunction示例
+execute as @a[scores={level=10..}] at @s run effect give @s minecraft:strength 30 1
+execute if score @s money matches 100.. run give @s diamond 1
+# 游戏规则设置
+gamerule keepInventory true
+gamerule doDaylightCycle false</code></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>JavaScript (Prism.js) <span class="library-label prism">Prism</span></h2>
+        <pre><code class="language-javascript">
+function example() {
+    const items = ['apple', 'banana', 'orange'];
+    items.forEach(item => {
+        console.log(`Processing ${item}`);
+    });
+    return items.length;
+}</code></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Python (Highlight.js) <span class="library-label highlight">Highlight.js</span></h2>
+        <pre><code class="language-python">
+def calculate_sum(numbers):
+    total = 0
+    for num in numbers:
+        if isinstance(num, (int, float)):
+            total += num
+    return total
+
+result = calculate_sum([1, 2, 3, "4", 5.0])</code></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>混合测试区域</h2>
+        <h3>MCFunction</h3>
+        <pre><code class="language-mcfunction">
+execute as @a at @s run particle minecraft:heart ~ ~1.8 ~ 0.2 0.2 0.2 0 1</code></pre>
+
+        <h3>Java (Prism)</h3>
+        <pre><code class="language-java">
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
+}</code></pre>
+
+        <h3>SQL (Highlight.js)</h3>
+        <pre><code class="language-sql">
+SELECT users.name, orders.total 
+FROM users 
+JOIN orders ON users.id = orders.user_id 
+WHERE orders.status = 'completed';</code></pre>
+    </div>
+
+    <!-- 脚本加载顺序很重要 -->
+    <!-- 1. Highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+
+    <!-- 2. Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+
+    <!-- 3. MCFunction 高亮 -->
+    <script src="dist/mcfunction-highlight.min.js"></script>
+
+    <script>
+        // 初始化 Highlight.js
+        hljs.highlightAll();
+
+        // 初始化 MCFunction 高亮
+        window.addEventListener('load', () => {
+            MCFunctionHighlight.default.init();
+        });
+    </script>
+</body>
+
+</html>
