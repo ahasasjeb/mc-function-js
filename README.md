@@ -1,5 +1,7 @@
 # MCFunction 语法高亮工具使用指南 | MCFunction Syntax Highlighter Usage Guide
 
+在线演示 | Online Demo: [https://1.lvjia.cc/](https://1.lvjia.cc/)
+
 ## 安装 | Installation
 
 ### 方法 1：直接引入文件 | Method 1: Direct File Import

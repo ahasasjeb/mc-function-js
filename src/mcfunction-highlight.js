@@ -78,8 +78,8 @@ const MCFunctionHighlight = {
                 // 维度ID
                 .replace(/\b(overworld|the_nether|the_end)\b/g,
                     match => `<span class="dimension">${match}</span>`)
-                // 方块ID和其他字符串
-                .replace(/\b(grass_block|stone|speed|glowing|true)\b/g,
+                //其他字符串
+                .replace(/\b(list|add|speed|glowing|true|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g,
                     match => `<span class="string">${match}</span>`);
 
             return `<div>${line}</div>`;
