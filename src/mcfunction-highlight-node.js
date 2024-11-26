@@ -60,17 +60,82 @@ class MCFunctionHighlightNode {
             </div>`;
     }
 
-    // 移除 getCSS 方法，改为从外部文件读取
-    static async getCSS() {
-        const fs = require('fs').promises;
-        const path = require('path');
-        try {
-            const cssPath = path.join(__dirname, 'mcfunction-highlight.css');
-            return await fs.readFile(cssPath, 'utf8');
-        } catch (err) {
-            console.error('Error reading CSS file:', err);
-            return '';
-        }
+    // 修复 getCSS 方法
+    static getCSS() {
+        return `
+.mcfunction-viewer {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    background: #1e1e1e !important;
+    color: #d4d4d4;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 1.5;
+    tab-size: 4;
+    hyphens: none;
+    padding: 1em;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 0.3em;
+    position: relative;
+    display: flex;
+    min-height: 50px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mcfunction-content {
+    overflow: auto;
+    padding-right: 20px;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
+
+.mcfunction-viewer .command { color: #ffaa00; font-weight: bold; }
+.mcfunction-viewer .selector { color: #55ffff; }
+.mcfunction-viewer .coordinates { color: #55ff55; }
+.mcfunction-viewer .string { color: #ff5555; }
+.mcfunction-viewer .comment { color: #7f7f7f; }
+.mcfunction-viewer .number { color: #55ff55; }
+.mcfunction-viewer .execute-modifier { color: #ff55ff; }
+.mcfunction-viewer .execute-condition { color: #ff5555; }
+.mcfunction-viewer .parameter { color: #55ffff; }
+.mcfunction-viewer .dimension { color: #55ffff; }
+.mcfunction-viewer .boolean { color: #ffaa00; }
+
+.mcfunction-copy-button {
+    position: sticky;
+    right: 0.5em;
+    top: 0.5em;
+    height: fit-content;
+    margin-left: 10px;
+    flex-shrink: 0;
+    padding: 0.4em 0.8em;
+    background: #333;
+    border: 1px solid #666;
+    border-radius: 0.3em;
+    color: #d4d4d4;
+    font-size: 0.8em;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.mcfunction-copy-button:hover {
+    background: #444;
+}
+
+.mcfunction-copy-button.success {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+.mcfunction-viewer:hover .mcfunction-copy-button {
+    opacity: 1;
+}`;
     }
 }
 

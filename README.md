@@ -41,10 +41,8 @@ const highlightedCode = MCFunctionHighlightNode.highlight(code);
 // 带包装器的高亮（包含复制按钮） | Highlight with wrapper (includes copy button)
 const highlightedWithWrapper = MCFunctionHighlightNode.highlightWithWrapper(code);
 
-// 获取CSS样式（异步） | Get CSS styles (async)
-MCFunctionHighlightNode.getCSS().then(css => {
-    console.log(css); // CSS样式内容 | CSS style content
-});
+// 获取CSS样式 | Get CSS styles
+const css = MCFunctionHighlightNode.getCSS();
 ```
 
 3. 在 Express 或其他 Node.js Web 框架中使用 | Use in Express or other Node.js web frameworks:
@@ -54,11 +52,11 @@ const MCFunctionHighlightNode = require('mcfunction-highlight/dist/mcfunction-hi
 
 const app = express();
 
-app.get('/highlight', async (req, res) => {
+app.get('/highlight', (req, res) => {
     const code = req.query.code || '';
-    const css = await MCFunctionHighlightNode.getCSS();
+    const css = MCFunctionHighlightNode.getCSS();
     const highlighted = MCFunctionHighlightNode.highlightWithWrapper(code);
-
+    
     res.send(`
         <!DOCTYPE html>
         <html>
