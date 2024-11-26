@@ -44,30 +44,18 @@ If you need to manually highlight newly added code blocks:
 ```javascript
 // 高亮单个元素 | Highlight single element
 const codeElement = document.querySelector('pre > code.language-mcfunction');
-MCFunctionHighlight.default.highlightElement(codeElement);
+MCFunctionHighlight.highlightElement(codeElement);
 
 // 高亮所有元素 | Highlight all elements
-window.MCFunctionHighlight?.highlightAll();
+MCFunctionHighlight.highlightAll();
 ```
 
-### 支持的语法高亮 | Supported Syntax Highlighting
-
-- 命令 Commands (`execute`, `give`, `tp` 等) - 蓝色 Blue
-- 选择器 Selectors (`@a`, `@p`, `@e`, `@s`, `@r`) - 青色 Teal
-- 坐标 Coordinates (`~`, `^` 开头的相对坐标) - 浅绿色 Light Green
-- 字符串 Strings (方块ID、物品ID等) - 橙色 Orange
-- 注释 Comments (`#` 开头) - 绿色 Green
-- 数字 Numbers - 浅绿色 Light Green
-- Execute修饰符 Execute Modifiers (`as`, `at`, `in` 等) - 粉色 Pink
-- Execute条件 Execute Conditions (`if`, `unless`) - 红色 Red
-- 参数 Parameters (`type`, `distance` 等) - 浅蓝色 Light Blue
-- 维度ID Dimensions (`overworld`, `the_nether`, `the_end`) - 青色 Teal
+注意：使用 highlightElement 方法时，确保传入的元素是带有 `language-mcfunction` 类名的 `<code>` 元素。
+Note: When using the highlightElement method, make sure the input element is a `<code>` element with the `language-mcfunction` class.
 
 ### 特性 | Features
 
 - 自动复制按钮 Automatic copy button
-- 动态内容监听 Dynamic content observation
-- 响应式设计 Responsive design
 - 暗色主题 Dark theme
 
 ### 示例 | Example
