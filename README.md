@@ -117,3 +117,49 @@ If you also use other syntax highlighting libraries (such as Prism. js or Highli
 
 按照这个顺序加载可以尽量避免各个语法高亮库正常工作且互不干扰。
 Loading in this order can try to avoid the normal operation of various syntax highlighting libraries without interfering with each other.
+
+### Node.js 环境使用（测试版） | Usage in Node.js Environment (Beta)
+
+从版本 1.2.0 开始，可以在服务器端或命令行工具中使用。
+
+#### 安装 | Installation
+
+```bash
+npm install mcfunction-highlight
+```
+
+#### 基础用法 | Basic Usage
+
+```javascript
+const MCFunctionHighlightNode = require('mcfunction-highlight/node');
+
+// 高亮文本 | Highlight text
+const code = `execute as @a at @s run tp @s ~ ~1 ~`;
+const highlighted = MCFunctionHighlightNode.highlight(code);
+
+// 分析代码 | Analyze code
+const analysis = MCFunctionHighlightNode.analyze(code);
+console.log(analysis);
+/* 输出示例 Output example:
+{
+    commands: ['execute', 'run', 'tp'],
+    selectors: ['@a', '@s'],
+    coordinates: ['~', '~1', '~'],
+    parameters: []
+}
+*/
+```
+
+#### API 说明 | API Reference
+
+##### MCFunctionHighlightNode.highlight(code)
+- 参数 | Parameter: `code` (String) - MCFunction 代码文本
+- 返回 | Returns: (String) - 处理后的文本
+
+##### MCFunctionHighlightNode.analyze(code)
+- 参数 | Parameter: `code` (String) - MCFunction 代码文本
+- 返回 | Returns: (Object) - 包含以下属性的分析结果：
+  - `commands`: 命令列表 | List of commands
+  - `selectors`: 选择器列表 | List of selectors
+  - `coordinates`: 坐标列表 | List of coordinates
+  - `parameters`: 参数列表 | List of parameters
