@@ -1,6 +1,6 @@
 .mcfunction-viewer {
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    background: #1e1e1e;
+    background: #1e1e1e !important;
     color: #d4d4d4;
     text-shadow: 0 1px rgba(0, 0, 0, 0.3);
     text-align: left;
@@ -11,16 +11,22 @@
     tab-size: 4;
     hyphens: none;
     padding: 1em;
-    margin: .5em 0;
+    margin: 0;
     overflow: hidden;
     border-radius: 0.3em;
     position: relative;
     display: flex;
+    min-height: 50px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .mcfunction-content {
     overflow: auto;
     padding-right: 20px;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
 }
 
 .mcfunction-viewer .command { color: #ffaa00; font-weight: bold; }
