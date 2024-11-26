@@ -23,6 +23,58 @@
 </script>
 ```
 
+### 方法 2：Node.js 环境使用 | Method 2: Usage in Node.js Environment
+
+1. 通过 npm 安装 | Install via npm:
+```bash
+npm install mcfunction-highlight
+```
+
+2. 在代码中使用 | Use in your code:
+```javascript
+const MCFunctionHighlightNode = require('mcfunction-highlight/dist/mcfunction-highlight-node');
+
+// 高亮代码 | Highlight code
+const code = `execute as @a at @s run setblock ~ ~ ~ minecraft:stone`;
+const highlightedCode = MCFunctionHighlightNode.highlight(code);
+
+// 带包装器的高亮（包含复制按钮） | Highlight with wrapper (includes copy button)
+const highlightedWithWrapper = MCFunctionHighlightNode.highlightWithWrapper(code);
+
+// 获取CSS样式（异步） | Get CSS styles (async)
+MCFunctionHighlightNode.getCSS().then(css => {
+    console.log(css); // CSS样式内容 | CSS style content
+});
+```
+
+3. 在 Express 或其他 Node.js Web 框架中使用 | Use in Express or other Node.js web frameworks:
+```javascript
+const express = require('express');
+const MCFunctionHighlightNode = require('mcfunction-highlight/dist/mcfunction-highlight-node');
+
+const app = express();
+
+app.get('/highlight', async (req, res) => {
+    const code = req.query.code || '';
+    const css = await MCFunctionHighlightNode.getCSS();
+    const highlighted = MCFunctionHighlightNode.highlightWithWrapper(code);
+
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>${css}</style>
+        </head>
+        <body>
+            ${highlighted}
+        </body>
+        </html>
+    `);
+});
+
+app.listen(3000);
+```
+
 ## 使用方法 | Usage
 
 ### 基础用法 | Basic Usage
@@ -117,90 +169,3 @@ If you also use other syntax highlighting libraries (such as Prism. js or Highli
 
 按照这个顺序加载可以尽量避免各个语法高亮库正常工作且互不干扰。
 Loading in this order can try to avoid the normal operation of various syntax highlighting libraries without interfering with each other.
-
-### Node.js 环境使用 | Usage in Node.js Environment
-
-如果你需要在服务器端生成高亮代码，可以使用 Node.js 版本：
-If you need to generate highlighted code on the server side, you can use the Node.js version:
-
-```javascript
-const MCFunctionHighlightNode = require('mcfunction-highlight/node');
-
-// 示例1：直接获取高亮HTML | Example 1: Get highlighted HTML directly
-const code = `execute as @a at @s run tp @s ~ ~1 ~`;
-const highlightedHtml = MCFunctionHighlightNode.highlight(code);
-console.log(highlightedHtml);
-// 输出 | Output:
-// <div><span class="command">execute</span> <span class="execute-modifier">as</span> <span class="selector">@a</span> <span class="execute-modifier">at</span> <span class="selector">@s</span> <span class="command">run</span> <span class="command">tp</span> <span class="selector">@s</span> <span class="coordinates">~</span> <span class="coordinates">~1</span> <span class="coordinates">~</span></div>
-
-// 示例2：获取完整的HTML（包含wrapper） | Example 2: Get complete HTML (with wrapper)
-const completeHtml = MCFunctionHighlightNode.highlightWithWrapper(code);
-
-// 示例3：获取CSS样式 | Example 3: Get CSS styles
-const css = MCFunctionHighlightNode.getCSS();
-
-// 示例4：在服务端渲染完整页面 | Example 4: Render complete page on server side
-const fullPage = `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>${MCFunctionHighlightNode.getCSS()}</style>
-</head>
-<body>
-    ${MCFunctionHighlightNode.highlightWithWrapper(code)}
-</body>
-</html>
-`;
-```
-
-在Express中使用示例 | Usage example in Express:
-
-```javascript
-const express = require('express');
-const MCFunctionHighlightNode = require('mcfunction-highlight/node');
-const app = express();
-
-app.get('/highlight', (req, res) => {
-    const code = req.query.code || 'execute as @a at @s run tp @s ~ ~1 ~';
-    
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>${MCFunctionHighlightNode.getCSS()}</style>
-        </head>
-        <body>
-            ${MCFunctionHighlightNode.highlightWithWrapper(code)}
-        </body>
-        </html>
-    `);
-});
-
-app.listen(3000);
-```
-
-在Next.js中使用示例 | Usage example in Next.js:
-
-```jsx
-// pages/mcfunction.js
-import MCFunctionHighlightNode from 'mcfunction-highlight/node';
-
-export default function MCFunctionPage({ code }) {
-    return (
-        <div>
-            <style dangerouslySetInnerHTML={{ __html: MCFunctionHighlightNode.getCSS() }} />
-            <div dangerouslySetInnerHTML={{ 
-                __html: MCFunctionHighlightNode.highlightWithWrapper(code) 
-            }} />
-        </div>
-    );
-}
-
-export async function getServerSideProps({ query }) {
-    const code = query.code || 'execute as @a at @s run tp @s ~ ~1 ~';
-    return {
-        props: { code }
-    };
-}
-```
-

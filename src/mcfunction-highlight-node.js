@@ -48,7 +48,7 @@ class MCFunctionHighlightNode {
         }).join('');
     }
 
-    // 生成完整的HTML，包含样式
+    // 修改 highlightWithWrapper 方法以包含复制按钮
     static highlightWithWrapper(code) {
         const highlighted = this.highlight(code);
         return `
@@ -56,41 +56,21 @@ class MCFunctionHighlightNode {
                 <div class="mcfunction-content">
                     ${highlighted}
                 </div>
+                <button class="mcfunction-copy-button">复制</button>
             </div>`;
     }
 
-    // 获取默认CSS样式
-    static getCSS() {
-        return `
-            .mcfunction-viewer {
-                font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-                background: #1e1e1e;
-                color: #d4d4d4;
-                text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-                text-align: left;
-                white-space: pre;
-                word-spacing: normal;
-                word-break: normal;
-                line-height: 1.5;
-                tab-size: 4;
-                hyphens: none;
-                padding: 1em;
-                margin: 0;
-                overflow: auto;
-                border-radius: 0.3em;
-            }
-            .mcfunction-viewer .command { color: #ffaa00; font-weight: bold; }
-            .mcfunction-viewer .selector { color: #55ffff; }
-            .mcfunction-viewer .coordinates { color: #55ff55; }
-            .mcfunction-viewer .string { color: #ff5555; }
-            .mcfunction-viewer .comment { color: #7f7f7f; }
-            .mcfunction-viewer .number { color: #55ff55; }
-            .mcfunction-viewer .execute-modifier { color: #ff55ff; }
-            .mcfunction-viewer .execute-condition { color: #ff5555; }
-            .mcfunction-viewer .parameter { color: #55ffff; }
-            .mcfunction-viewer .dimension { color: #55ffff; }
-            .mcfunction-viewer .boolean { color: #ffaa00; }
-        `;
+    // 移除 getCSS 方法，改为从外部文件读取
+    static async getCSS() {
+        const fs = require('fs').promises;
+        const path = require('path');
+        try {
+            const cssPath = path.join(__dirname, 'mcfunction-highlight.css');
+            return await fs.readFile(cssPath, 'utf8');
+        } catch (err) {
+            console.error('Error reading CSS file:', err);
+            return '';
+        }
     }
 }
 
