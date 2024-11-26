@@ -51,13 +51,7 @@ class MCFunctionHighlightNode {
     // 修改 highlightWithWrapper 方法以包含复制按钮
     static highlightWithWrapper(code) {
         const highlighted = this.highlight(code);
-        return `
-            <div class="mcfunction-viewer">
-                <div class="mcfunction-content">
-                    ${highlighted}
-                </div>
-                <button class="mcfunction-copy-button">复制</button>
-            </div>`;
+        return `<pre class="mcfunction-viewer"><code class="mcfunction-content">${highlighted}</code><button class="mcfunction-copy-button">复制</button></pre>`;
     }
 
     // 修复 getCSS 方法
@@ -139,4 +133,9 @@ class MCFunctionHighlightNode {
     }
 }
 
-module.exports = MCFunctionHighlightNode;
+// 修改导出方式
+module.exports = {
+    highlight: MCFunctionHighlightNode.highlight,
+    highlightWithWrapper: MCFunctionHighlightNode.highlightWithWrapper,
+    getCSS: MCFunctionHighlightNode.getCSS
+};

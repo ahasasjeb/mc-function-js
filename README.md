@@ -1,6 +1,6 @@
 # MCFunction 语法高亮工具使用指南 | MCFunction Syntax Highlighter Usage Guide
 
-# 项目处于测试版，仍在开发！| The project is in beta testing and is still under development!
+# 项目已完成 | Project Completed
 在线演示 | Online Demo: [https://1.lvjia.cc/](https://1.lvjia.cc/)
 
 ## 安装 | Installation
@@ -32,46 +32,31 @@ npm install mcfunction-highlight
 
 2. 在代码中使用 | Use in your code:
 ```javascript
-const MCFunctionHighlightNode = require('mcfunction-highlight/dist/mcfunction-highlight-node');
+// 导入模块
+const MCFunction = require('mcfunction-highlight/node');
 
-// 高亮代码 | Highlight code
+// MCFunction 代码
 const code = `execute as @a at @s run setblock ~ ~ ~ minecraft:stone`;
-const highlightedCode = MCFunctionHighlightNode.highlight(code);
 
-// 带包装器的高亮（包含复制按钮） | Highlight with wrapper (includes copy button)
-const highlightedWithWrapper = MCFunctionHighlightNode.highlightWithWrapper(code);
+// 生成高亮后的 HTML
+const highlightedCode = MCFunction.highlightWithWrapper(code);
 
-// 获取CSS样式 | Get CSS styles
-const css = MCFunctionHighlightNode.getCSS();
+// 完整的 HTML 页面
+const html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>${MCFunction.getCSS()}</style>
+</head>
+<body>
+    ${highlightedCode}
+</body>
+</html>
+`;
+
+console.log(html); // 输出生成的 HTML
 ```
 
-3. 在 Express 或其他 Node.js Web 框架中使用 | Use in Express or other Node.js web frameworks:
-```javascript
-const express = require('express');
-const MCFunctionHighlightNode = require('mcfunction-highlight/dist/mcfunction-highlight-node');
-
-const app = express();
-
-app.get('/highlight', (req, res) => {
-    const code = req.query.code || '';
-    const css = MCFunctionHighlightNode.getCSS();
-    const highlighted = MCFunctionHighlightNode.highlightWithWrapper(code);
-    
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>${css}</style>
-        </head>
-        <body>
-            ${highlighted}
-        </body>
-        </html>
-    `);
-});
-
-app.listen(3000);
-```
 
 ## 使用方法 | Usage
 
