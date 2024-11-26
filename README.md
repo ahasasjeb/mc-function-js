@@ -118,48 +118,89 @@ If you also use other syntax highlighting libraries (such as Prism. js or Highli
 按照这个顺序加载可以尽量避免各个语法高亮库正常工作且互不干扰。
 Loading in this order can try to avoid the normal operation of various syntax highlighting libraries without interfering with each other.
 
-### Node.js 环境使用（测试版） | Usage in Node.js Environment (Beta)
+### Node.js 环境使用 | Usage in Node.js Environment
 
-从版本 1.2.0 开始，可以在服务器端或命令行工具中使用。
-
-#### 安装 | Installation
-
-```bash
-npm install mcfunction-highlight
-```
-
-#### 基础用法 | Basic Usage
+如果你需要在服务器端生成高亮代码，可以使用 Node.js 版本：
+If you need to generate highlighted code on the server side, you can use the Node.js version:
 
 ```javascript
 const MCFunctionHighlightNode = require('mcfunction-highlight/node');
 
-// 高亮文本 | Highlight text
+// 示例1：直接获取高亮HTML | Example 1: Get highlighted HTML directly
 const code = `execute as @a at @s run tp @s ~ ~1 ~`;
-const highlighted = MCFunctionHighlightNode.highlight(code);
+const highlightedHtml = MCFunctionHighlightNode.highlight(code);
+console.log(highlightedHtml);
+// 输出 | Output:
+// <div><span class="command">execute</span> <span class="execute-modifier">as</span> <span class="selector">@a</span> <span class="execute-modifier">at</span> <span class="selector">@s</span> <span class="command">run</span> <span class="command">tp</span> <span class="selector">@s</span> <span class="coordinates">~</span> <span class="coordinates">~1</span> <span class="coordinates">~</span></div>
 
-// 分析代码 | Analyze code
-const analysis = MCFunctionHighlightNode.analyze(code);
-console.log(analysis);
-/* 输出示例 Output example:
-{
-    commands: ['execute', 'run', 'tp'],
-    selectors: ['@a', '@s'],
-    coordinates: ['~', '~1', '~'],
-    parameters: []
-}
-*/
+// 示例2：获取完整的HTML（包含wrapper） | Example 2: Get complete HTML (with wrapper)
+const completeHtml = MCFunctionHighlightNode.highlightWithWrapper(code);
+
+// 示例3：获取CSS样式 | Example 3: Get CSS styles
+const css = MCFunctionHighlightNode.getCSS();
+
+// 示例4：在服务端渲染完整页面 | Example 4: Render complete page on server side
+const fullPage = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>${MCFunctionHighlightNode.getCSS()}</style>
+</head>
+<body>
+    ${MCFunctionHighlightNode.highlightWithWrapper(code)}
+</body>
+</html>
+`;
 ```
 
-#### API 说明 | API Reference
+在Express中使用示例 | Usage example in Express:
 
-##### MCFunctionHighlightNode.highlight(code)
-- 参数 | Parameter: `code` (String) - MCFunction 代码文本
-- 返回 | Returns: (String) - 处理后的文本
+```javascript
+const express = require('express');
+const MCFunctionHighlightNode = require('mcfunction-highlight/node');
+const app = express();
 
-##### MCFunctionHighlightNode.analyze(code)
-- 参数 | Parameter: `code` (String) - MCFunction 代码文本
-- 返回 | Returns: (Object) - 包含以下属性的分析结果：
-  - `commands`: 命令列表 | List of commands
-  - `selectors`: 选择器列表 | List of selectors
-  - `coordinates`: 坐标列表 | List of coordinates
-  - `parameters`: 参数列表 | List of parameters
+app.get('/highlight', (req, res) => {
+    const code = req.query.code || 'execute as @a at @s run tp @s ~ ~1 ~';
+    
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>${MCFunctionHighlightNode.getCSS()}</style>
+        </head>
+        <body>
+            ${MCFunctionHighlightNode.highlightWithWrapper(code)}
+        </body>
+        </html>
+    `);
+});
+
+app.listen(3000);
+```
+
+在Next.js中使用示例 | Usage example in Next.js:
+
+```jsx
+// pages/mcfunction.js
+import MCFunctionHighlightNode from 'mcfunction-highlight/node';
+
+export default function MCFunctionPage({ code }) {
+    return (
+        <div>
+            <style dangerouslySetInnerHTML={{ __html: MCFunctionHighlightNode.getCSS() }} />
+            <div dangerouslySetInnerHTML={{ 
+                __html: MCFunctionHighlightNode.highlightWithWrapper(code) 
+            }} />
+        </div>
+    );
+}
+
+export async function getServerSideProps({ query }) {
+    const code = query.code || 'execute as @a at @s run tp @s ~ ~1 ~';
+    return {
+        props: { code }
+    };
+}
+```
+

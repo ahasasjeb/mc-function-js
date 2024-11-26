@@ -2,85 +2,96 @@ class MCFunctionHighlightNode {
     static highlight(code) {
         return code.split('\n').map(line => {
             if (!line.trim()) {
-                return '';
+                return '<div>&nbsp;</div>';
             }
 
             if (line.trim().startsWith('#')) {
-                return line;
+                return `<div class="comment">${line}</div>`;
             }
 
-            // 保持原有的正则替换逻辑，但移除HTML标签
             line = line
                 // execute子命令
-                .replace(/\b(execute|run)\b/g, '$1')
+                .replace(/\b(execute|run)\b/g,
+                    match => `<span class="command">${match}</span>`)
                 // execute修饰子命令
-                .replace(/\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g, '$1')
+                .replace(/\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g,
+                    match => `<span class="execute-modifier">${match}</span>`)
                 // execute条件子命令
-                .replace(/\b(if|unless)\b/g, '$1')
+                .replace(/\b(if|unless)\b/g,
+                    match => `<span class="execute-condition">${match}</span>`)
                 // 其他命令
-                .replace(/\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp)\b/g, '$1')
+                .replace(/\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp)\b/g,
+                    match => `<span class="command">${match}</span>`)
                 // 选择器
-                .replace(/@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|nbt|rotation|pitch|yaw)=[^\]]*)*\])?/g, '$&')
+                .replace(/@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|nbt|rotation|pitch|yaw)=[^\]]*)*\])?/g,
+                    match => `<span class="selector">${match}</span>`)
                 // 坐标
-                .replace(/(?:^|\s)([~^][-\d]*\.?\d*)/g, '$&')
+                .replace(/(?:^|\s)([~^][-\d]*\.?\d*)/g,
+                    (match, coord) => match.replace(coord, `<span class="coordinates">${coord}</span>`))
                 // 数字和范围
-                .replace(/\b(\d+(?:\.\.\d+)?)\b/g, '$1')
+                .replace(/\b(\d+(?:\.\.\d+)?)\b/g,
+                    match => `<span class="number">${match}</span>`)
                 // 布尔值
-                .replace(/\b(true|false)\b/g, '$1')
+                .replace(/\b(true|false)\b/g,
+                    match => `<span class="boolean">${match}</span>`)
                 // 选择器参数和execute参数
-                .replace(/\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|sort|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g, '$1')
+                .replace(/\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|sort|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g,
+                    match => `<span class="parameter">${match}</span>`)
                 // 维度ID
-                .replace(/\b(overworld|the_nether|the_end)\b/g, '$1')
+                .replace(/\b(overworld|the_nether|the_end)\b/g,
+                    match => `<span class="dimension">${match}</span>`)
                 // 其他字符串
-                .replace(/\b(list|add|speed|glowing|true|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g, '$1');
+                .replace(/\b(list|add|speed|glowing|true|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g,
+                    match => `<span class="string">${match}</span>`);
 
-            return line;
-        }).join('\n');
+            return `<div>${line}</div>`;
+        }).join('');
     }
 
-    // 添加一个方法来获取语法分析结果
-    static analyze(code) {
-        const analysis = {
-            commands: new Set(),
-            selectors: new Set(),
-            coordinates: new Set(),
-            parameters: new Set()
-        };
+    // 生成完整的HTML，包含样式
+    static highlightWithWrapper(code) {
+        const highlighted = this.highlight(code);
+        return `
+            <div class="mcfunction-viewer">
+                <div class="mcfunction-content">
+                    ${highlighted}
+                </div>
+            </div>`;
+    }
 
-        code.split('\n').forEach(line => {
-            // 提取命令
-            const commandMatch = line.match(/\b(execute|run|advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp)\b/g);
-            if (commandMatch) {
-                commandMatch.forEach(cmd => analysis.commands.add(cmd));
+    // 获取默认CSS样式
+    static getCSS() {
+        return `
+            .mcfunction-viewer {
+                font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+                background: #1e1e1e;
+                color: #d4d4d4;
+                text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+                text-align: left;
+                white-space: pre;
+                word-spacing: normal;
+                word-break: normal;
+                line-height: 1.5;
+                tab-size: 4;
+                hyphens: none;
+                padding: 1em;
+                margin: 0;
+                overflow: auto;
+                border-radius: 0.3em;
             }
-
-            // 提取选择器
-            const selectorMatch = line.match(/@[apers](?:\[.*?\])?/g);
-            if (selectorMatch) {
-                selectorMatch.forEach(selector => analysis.selectors.add(selector));
-            }
-
-            // 提取坐标
-            const coordMatch = line.match(/[~^][-\d]*\.?\d*/g);
-            if (coordMatch) {
-                coordMatch.forEach(coord => analysis.coordinates.add(coord));
-            }
-
-            // 提取参数
-            const paramMatch = line.match(/\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz)\b/g);
-            if (paramMatch) {
-                paramMatch.forEach(param => analysis.parameters.add(param));
-            }
-        });
-
-        // 转换Set为数组
-        return {
-            commands: [...analysis.commands],
-            selectors: [...analysis.selectors],
-            coordinates: [...analysis.coordinates],
-            parameters: [...analysis.parameters]
-        };
+            .mcfunction-viewer .command { color: #ffaa00; font-weight: bold; }
+            .mcfunction-viewer .selector { color: #55ffff; }
+            .mcfunction-viewer .coordinates { color: #55ff55; }
+            .mcfunction-viewer .string { color: #ff5555; }
+            .mcfunction-viewer .comment { color: #7f7f7f; }
+            .mcfunction-viewer .number { color: #55ff55; }
+            .mcfunction-viewer .execute-modifier { color: #ff55ff; }
+            .mcfunction-viewer .execute-condition { color: #ff5555; }
+            .mcfunction-viewer .parameter { color: #55ffff; }
+            .mcfunction-viewer .dimension { color: #55ffff; }
+            .mcfunction-viewer .boolean { color: #ffaa00; }
+        `;
     }
 }
 
-module.exports = MCFunctionHighlightNode; 
+module.exports = MCFunctionHighlightNode;
