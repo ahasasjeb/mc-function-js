@@ -40,6 +40,7 @@
 .mcfunction-viewer .parameter { color: #55ffff; }
 .mcfunction-viewer .dimension { color: #55ffff; }
 .mcfunction-viewer .boolean { color: #ffaa00; }
+.mcfunction-viewer .gamerule {color:#7fffd4}
 
 .mcfunction-copy-button {
     position: sticky;
