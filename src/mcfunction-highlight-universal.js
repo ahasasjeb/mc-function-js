@@ -51,10 +51,22 @@ const MCFunctionHighlight = {
         }).join('');
     },
 
+    // 配置选项
+    options: {
+        autoUpdate: true
+    },
+
+    // 设置选项
+    configure(options) {
+        Object.assign(this.options, options);
+    },
+
     // 浏览器特定功能
     init() {
         this.highlightAll();
-        this.observeDOM();
+        if (this.options.autoUpdate) {
+            this.observeDOM();
+        }
     },
 
     highlightAll() {

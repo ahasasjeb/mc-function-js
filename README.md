@@ -87,6 +87,25 @@ MCFunctionHighlight.highlightAll();
 注意：使用 highlightElement 方法时，确保传入的元素是带有 `language-mcfunction` 类名的 `<code>` 元素。
 Note: When using the highlightElement method, make sure the input element is a `<code>` element with the `language-mcfunction` class.
 
+### 配置选项 | Configuration Options
+
+你可以在初始化前配置一些选项：
+You can configure some options before initialization:
+
+```javascript
+// 配置选项 | Configure options
+MCFunctionHighlight.configure({
+    autoUpdate: false  // 禁用自动更新 | Disable auto-update
+});
+
+// 然后初始化 | Then initialize
+MCFunctionHighlight.init();
+```
+
+可用的配置选项 | Available configuration options:
+- `autoUpdate`: (默认值: true) 是否自动检测和高亮新添加的代码块。设为 false 时需要手动调用高亮方法。
+  (Default: true) Whether to automatically detect and highlight newly added code blocks. When set to false, you need to call highlight methods manually.
+
 ### Node.js 环境 | Node.js Environment
 
 Node.js 环境提供了三个主要方法：
