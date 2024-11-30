@@ -1,6 +1,6 @@
 class MCFunctionHighlightNode {
     static highlight(code) {
-        return code.split('\n').map(line => {
+        return code.trimEnd().split('\n').map(line => {
             if (!line.trim()) {
                 return '<div>&nbsp;</div>';
             }

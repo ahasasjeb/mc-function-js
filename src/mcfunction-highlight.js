@@ -30,14 +30,13 @@ const MCFunctionHighlight = {
         copyButton.addEventListener('click', () => this.copyCode(code, copyButton));
         wrapper.appendChild(copyButton);
 
-
         const pre = element.parentNode;
         pre.innerHTML = '';
         pre.appendChild(wrapper);
     },
 
     highlight(code) {
-        return code.split('\n').map(line => {
+        return code.trimEnd().split('\n').map(line => {
 
             if (!line.trim()) {
                 return '<div>&nbsp;</div>';
