@@ -21,6 +21,8 @@
         MCFunctionHighlight.init();
     });
 </script>
+    <pre><code class="language-mcfunction">execute as @a at @s run setblock ~ ~ ~ minecraft:stone
+    </code></pre>
 ```
 
 ### 方法 2：Node.js 环境使用 | Method 2: Usage in Node.js Environment

@@ -1,6 +1,6 @@
 {
   "name": "mcfunction-highlight",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "MCFunction 语法高亮器",
   "main": "src/mcfunction-highlight-universal.js",
   "browser": "dist/mcfunction-highlight.min.js",
