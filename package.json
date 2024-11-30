@@ -1,8 +1,8 @@
 {
   "name": "mcfunction-highlight",
-  "version": "2.5.3",
+  "version": "3.0.0",
   "description": "MCFunction 语法高亮器",
-  "main": "dist/mcfunction-highlight.min.js",
+  "main": "src/mcfunction-highlight-universal.js",
   "style": "dist/mcfunction-highlight.min.css",
   "files": [
     "dist",
@@ -37,7 +37,9 @@
     "webpack-cli": "^5.1.4"
   },
   "exports": {
-    ".": "./dist/mcfunction-highlight.min.js",
-    "./node": "./src/mcfunction-highlight-node.js"
+    ".": {
+      "import": "./src/mcfunction-highlight-universal.js",
+      "require": "./src/mcfunction-highlight-universal.js"
+    }
   }
 }

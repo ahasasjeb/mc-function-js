@@ -8,8 +8,8 @@
 ### 方法 1：直接引入文件 | Method 1: Direct File Import
 
 1. 下载以下两个文件 | Download these two files:
-   - `mcfunction-highlight.css`
-   - `mcfunction-highlight.js`
+   - `mcfunction-highlight.min.css`
+   - `mcfunction-highlight.min.js`
 
 2. 在 HTML 中引入文件 | Include files in your HTML:
 ```html
@@ -33,7 +33,7 @@ npm install mcfunction-highlight
 2. 在代码中使用 | Use in your code:
 ```javascript
 // 导入模块
-const MCFunction = require('mcfunction-highlight/node');
+const MCFunction = require('mcfunction-highlight');
 
 // MCFunction 代码
 const code = `execute as @a at @s run setblock ~ ~ ~ minecraft:stone`;
@@ -57,10 +57,9 @@ const html = `
 console.log(html); // 输出生成的 HTML
 ```
 
-
 ## 使用方法 | Usage
 
-### 基础用法 | Basic Usage
+### 浏览器环境 | Browser Environment
 
 将你的 MCFunction 代码放在带有特定类名的 `<pre>` 和 `<code>` 标签中：
 Place your MCFunction code within `<pre>` and `<code>` tags with specific class:
@@ -70,8 +69,6 @@ Place your MCFunction code within `<pre>` and `<code>` tags with specific class:
 execute at @a in minecraft:the_end run setblock ~ ~-1 ~ minecraft:diamond_block
 </code></pre>
 ```
-
-### 手动高亮特定元素 | Manually Highlight Specific Elements
 
 如果你需要手动高亮新添加的代码块：
 If you need to manually highlight newly added code blocks:
@@ -88,67 +85,32 @@ MCFunctionHighlight.highlightAll();
 注意：使用 highlightElement 方法时，确保传入的元素是带有 `language-mcfunction` 类名的 `<code>` 元素。
 Note: When using the highlightElement method, make sure the input element is a `<code>` element with the `language-mcfunction` class.
 
+### Node.js 环境 | Node.js Environment
+
+Node.js 环境提供了三个主要方法：
+Node.js environment provides three main methods:
+
+1. `highlight(code)`: 返回高亮后的 HTML 代码片段 | Returns highlighted HTML code snippet
+2. `highlightWithWrapper(code)`: 返回带有包装器的完整 HTML | Returns complete HTML with wrapper
+3. `getCSS()`: 返回必要的 CSS 样式 | Returns required CSS styles
+
+```javascript
+const MCFunction = require('mcfunction-highlight');
+
+// 基础高亮 Basic highlighting
+const highlighted = MCFunction.highlight('execute as @a at @s run say Hello');
+
+// 带包装器的高亮 Highlighting with wrapper
+const withWrapper = MCFunction.highlightWithWrapper('execute as @a at @s run say Hello');
+
+// 获取 CSS 样式 Get CSS styles
+const css = MCFunction.getCSS();
+```
+
 ### 特性 | Features
 
-- 自动复制按钮 Automatic copy button
+- 语法高亮 Syntax highlighting
+- 自动复制按钮（仅浏览器环境）Auto-copy button (browser only)
 - 暗色主题 Dark theme
-
-### 示例 | Example
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/mcfunction-highlight@latest/dist/mcfunction-highlight.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/mcfunction-highlight@latest/dist/mcfunction-highlight.min.js"></script>
-</head>
-<body>
-    <pre><code class="language-mcfunction"># 这是一个注释 This is a comment
-execute at @a in minecraft:the_end run setblock ~ ~-1 ~ minecraft:diamond_block</code></pre>
-
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            MCFunctionHighlight.init();
-        });
-    </script>
-</body>
-</html>
-```
-
-这个工具会自动监听 DOM 变化，所以动态添加的代码块也会自动高亮。
-The tool automatically monitors DOM changes, so dynamically added code blocks will be highlighted automatically.
-项目基于MIT许可证，你可以自由修改。
-The project is based on the MIT license, allowing you to freely modify it.
-
-### 与其他语法高亮库共存 | Coexistence with Other Syntax Highlighters
-
-If you also use other syntax highlighting libraries (such as Prism. js or Highlight. js) in your project, please load the scripts in the following order to avoid conflicts:
-如果你的项目中同时使用了其他语法高亮库（如 Prism.js 或 Highlight.js），请按照以下顺序加载脚本以避免冲突：
-
-```html
-<!-- 1. 首先加载其他语法高亮库的样式 First load other syntax highlighter styles -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" rel="stylesheet">
-
-<!-- 2. 然后加载 MCFunction 高亮样式 Then load MCFunction highlighter styles -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mcfunction-highlight/dist/mcfunction-highlight.min.css">
-
-<!-- 3. 加载其他语法高亮库的脚本 Load other syntax highlighter scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-
-<!-- 4. 最后加载 MCFunction 高亮脚本 Finally load MCFunction highlighter script -->
-<script src="https://cdn.jsdelivr.net/npm/mcfunction-highlight/dist/mcfunction-highlight.min.js"></script>
-
-<script>
-    // 5. 初始化各个高亮库 Initialize all highlighters
-    hljs.highlightAll(); // 如果使用了 Highlight.js
-    // Prism.js 会自动初始化
-    window.addEventListener('DOMContentLoaded', () => {
-        MCFunctionHighlight.init();
-    });
-</script>
-```
-
-按照这个顺序加载可以尽量避免各个语法高亮库正常工作且互不干扰。
-Loading in this order can try to avoid the normal operation of various syntax highlighting libraries without interfering with each other.
+- DOM 变化监听（仅浏览器环境）DOM mutation observer (browser only)
+- 支持 Node.js 和浏览器环境 Support for both Node.js and browser environments

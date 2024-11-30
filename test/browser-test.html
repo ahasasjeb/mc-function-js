@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCFunction Highlight Browser Test</title>
+    <link rel="stylesheet" href="../dist/mcfunction-highlight.min.css">
+    <style>
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>MCFunction Highlight 浏览器测试</h1>
+    
+    <div class="test-section">
+        <h2>基础命令测试</h2>
+        <pre><code class="language-mcfunction">
+# 这是一个注释
+execute as @a at @s run tp @s ~ ~1 ~
+give @p diamond_sword{display:{Name:'{"text":"测试剑"}'}} 1
+scoreboard objectives add test dummy "测试计分板"
+</code></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>复杂命令测试</h2>
+        <pre><code class="language-mcfunction"># 游戏规则设置
+gamerule doMobSpawning false
+gamerule doDaylightCycle true
+
+# 复杂的execute命令
+execute as @e[type=zombie,distance=..10] at @s facing entity @p eyes run tp @s ^ ^ ^0.1
+execute if score @p test matches 10..20 run function namespace:test
+
+# NBT数据测试
+data modify storage test:storage root.test set value {count:1b,name:"test"}
+</code></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>动态添加测试</h2>
+        <button onclick="addNewCode()">添加新代码块</button>
+        <div id="dynamic-container"></div>
+    </div>
+
+    <script src="../dist/mcfunction-highlight.min.js"></script>
+    <script>
+        function addNewCode() {
+            const container = document.getElementById('dynamic-container');
+            const pre = document.createElement('pre');
+            const code = document.createElement('code');
+            code.className = 'language-mcfunction';
+            code.textContent = '# 动态添加的代码\nexecute as @p at @s run setblock ~ ~ ~ stone\neffect give @a speed 30 1 true';
+            pre.appendChild(code);
+            container.appendChild(pre);
+            // MCFunctionHighlight会自动处理新添加的代码块
+        }
+    </script>
+</body>
+</html>
