@@ -5,7 +5,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
   entry: {
-    'mcfunction-highlight': './src/mcfunction-highlight-universal.js',
+    'mcfunction-highlight': './src/mcfunction-highlight-browser.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

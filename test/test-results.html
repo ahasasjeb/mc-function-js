@@ -2,14 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>MCFunction Highlight Test Results</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .test-case { margin-bottom: 30px; }
-        .test-name { font-size: 1.5em; margin-bottom: 10px; }
-        .original-code { background: #f5f5f5; padding: 10px; margin: 10px 0; }
-        pre { margin: 0; }
-    </style>
+    <title>MCFunction Highlight Node.js Test Results</title>
     <style>
         
 .mcfunction-viewer {
@@ -58,27 +51,51 @@
 
 /* 只在浏览器环境中显示复制按钮相关样式 */
 
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        pre {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
     <h1>MCFunction Highlight Node.js 测试结果</h1>
-
-    <div class="test-case">
-        <div class="test-name">基础命令测试</div>
-        <div class="original-code">
-            <pre># 这是一个注释
+    
+        <div class="test-case">
+            <h2>基础命令测试</h2>
+            <h3>原始代码:</h3>
+            <pre><code># 这是一个注释
 execute as @a at @s run tp @s ~ ~1 ~
 give @p diamond_sword{display:{Name:'{"text":"测试剑"}'}} 1
-scoreboard objectives add test dummy "测试计分板"</pre>
-        </div>
-        <div class="highlighted-code">
+scoreboard objectives add test dummy "测试计分板"</code></pre>
+            <h3>高亮后的HTML:</h3>
             <pre class="mcfunction-viewer"><code class="mcfunction-content"><div class="comment"># 这是一个注释</div><div><span class="command">execute</span> <span class="execute-modifier">as</span> <span class="selector">@a</span> <span class="execute-modifier">at</span> <span class="selector">@s</span> <span class="command">run</span> <span class="command">tp</span> <span class="selector">@s</span> <span class="coordinates">~</span> <span class="coordinates">~<span class="number">1</span></span> <span class="coordinates">~</span></div><div><span class="command">give</span> <span class="selector">@p</span> diamond_sword{<span class="string">display</span>:{Name:'{"text":"测试剑"}'}} <span class="number">1</span></div><div><span class="command">scoreboard</span> objectives <span class="string">add</span> test dummy "测试计分板"</div></code></pre>
         </div>
-    </div>
-    <div class="test-case">
-        <div class="test-name">复杂命令测试</div>
-        <div class="original-code">
-            <pre># 游戏规则设置
+    
+        <div class="test-case">
+            <h2>复杂命令测试</h2>
+            <h3>原始代码:</h3>
+            <pre><code># 游戏规则设置
 gamerule doMobSpawning false
 gamerule doDaylightCycle true
 
@@ -87,11 +104,10 @@ execute as @e[type=zombie,distance=..10] at @s facing entity @p eyes run tp @s ^
 execute if score @p test matches 10..20 run function namespace:test
 
 # NBT数据测试
-data modify storage test:storage root.test set value {count:1b,name:"test"}</pre>
-        </div>
-        <div class="highlighted-code">
+data modify storage test:storage root.test set value {count:1b,name:"test"}</code></pre>
+            <h3>高亮后的HTML:</h3>
             <pre class="mcfunction-viewer"><code class="mcfunction-content"><div class="comment"># 游戏规则设置</div><div><span class="command">gamerule</span> <span class="gamerule">doMobSpawning</span> <span class="boolean">false</span></div><div><span class="command">gamerule</span> <span class="gamerule">doDaylightCycle</span> <span class="boolean"><span class="string">true</span></span></div><div>&nbsp;</div><div class="comment"># 复杂的execute命令</div><div><span class="command">execute</span> <span class="execute-modifier">as</span> <span class="selector">@e[<span class="parameter">type</span>=zombie,<span class="parameter">distance</span>=..<span class="number">10</span>]</span> <span class="execute-modifier">at</span> <span class="selector">@s</span> <span class="execute-modifier">facing</span> <span class="parameter">entity</span> <span class="selector">@p</span> <span class="parameter">eyes</span> <span class="command">run</span> <span class="command">tp</span> <span class="selector">@s</span> <span class="coordinates">^</span> <span class="coordinates">^</span> <span class="coordinates">^<span class="number">0</span>.<span class="number">1</span></span></div><div><span class="command">execute</span> <span class="execute-condition">if</span> <span class="parameter">score</span> <span class="selector">@p</span> test <span class="parameter">matches</span> <span class="number">10..20</span> <span class="command">run</span> <span class="command">function</span> namespace:test</div><div>&nbsp;</div><div class="comment"># NBT数据测试</div><div><span class="command">data</span> <span class="string">modify</span> <span class="parameter">storage</span> test:<span class="parameter">storage</span> root.test <span class="string">set</span> value {count:1b,<span class="parameter">name</span>:"test"}</div></code></pre>
         </div>
-    </div>
+    
 </body>
 </html>

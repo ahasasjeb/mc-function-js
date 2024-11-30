@@ -1,5 +1,3 @@
-import './mcfunction-highlight.css';
-
 const MCFunctionHighlight = {
     highlight(code) {
         return code.trimEnd().split('\n').map(line => {
@@ -231,11 +229,7 @@ if (typeof window !== 'undefined') {
 if (typeof window === 'undefined') {
     // Node.js 环境
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = {
-            highlight: MCFunctionHighlight.highlight.bind(MCFunctionHighlight),
-            highlightWithWrapper: MCFunctionHighlight.highlightWithWrapper.bind(MCFunctionHighlight),
-            getCSS: MCFunctionHighlight.getCSS.bind(MCFunctionHighlight)
-        };
+        module.exports = MCFunctionHighlight;
     }
 } else {
     // 浏览器环境
@@ -243,4 +237,7 @@ if (typeof window === 'undefined') {
 }
 
 // 为了支持 ES modules
-export default MCFunctionHighlight;
+if (typeof exports !== 'undefined') {
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = MCFunctionHighlight;
+}
