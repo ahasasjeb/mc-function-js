@@ -1,50 +1,64 @@
+const EXECUTE_REGEX = /\b(execute|run)\b/g;
+const EXECUTE_MODIFIER_REGEX = /\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g;
+const EXECUTE_CONDITION_REGEX = /\b(if|unless)\b/g;
+const COMMAND_REGEX = /\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|teleport|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp|tick)\b/g;
+const SELECTOR_REGEX = /@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|nbt|rotation|pitch|yaw)=[^\]]*)*\])?/g;
+const COORDINATE_REGEX = /(?:^|\s)([~^][-\d]*\.?\d*)/g;
+const NUMBER_REGEX = /\b(\d+(?:\.\.\d+)?)\b/g;
+const BOOLEAN_REGEX = /\b(true|false)\b/g;
+const PARAMETER_REGEX = /\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|sort|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g;
+const DIMENSION_REGEX = /\b(overworld|the_nether|the_end)\b/g;
+const GAMERULE_REGEX = /\b(announceAdvancements|blockExplosionDropDecay|commandBlockOutput|commandModificationBlockLimit|disableElytraMovementCheck|disablePlayerMovementCheck|disableRaids|doDaylightCycle|doEntityDrops|doFireTick|doImmediateRespawn|doInsomnia|doLimitedCrafting|doMobLoot|doMobSpawning|doPatrolSpawning|doTileDrops|doTraderSpawning|doVinesSpread|doWardenSpawning|doWeatherCycle|drowningDamage|fallDamage|fireDamage|freezeDamage|functionCommandLimit|keepInventory|maxCommandChainLength|mobGriefing|naturalRegeneration|playersSleepingPercentage|projectilesCanBreakBlocks|pvp|randomTickSpeed|recipesUnlock|respawnBlocksExplode|sendCommandFeedback|showBorderEffect|showCoordinates|showDaysPlayed|showDeathMessages|showRecipeMessages|showTags|spawnRadius|tntExplodes|tntExplosionDropDecay)\b/g;
+const STRING_REGEX = /\b(list|add|speed|glowing|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g;
+
 const MCFunctionHighlight = {
     highlight(code) {
         return code.trimEnd().split('\n').map(line => {
-            if (!line.trim()) {
+            const trimmed = line.trim();
+            if (!trimmed) {
                 return '<div>&nbsp;</div>';
             }
 
-            if (line.trim().startsWith('#')) {
+            if (trimmed.startsWith('#')) {
                 return `<div class="comment">${line}</div>`;
             }
 
             line = line
                 // execute子命令
-                .replace(/\b(execute|run)\b/g,
+                .replace(EXECUTE_REGEX,
                     match => `<span class="command">${match}</span>`)
                 // execute修饰子命令
-                .replace(/\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g,
+                .replace(EXECUTE_MODIFIER_REGEX,
                     match => `<span class="execute-modifier">${match}</span>`)
                 // execute条件子命令
-                .replace(/\b(if|unless)\b/g,
+                .replace(EXECUTE_CONDITION_REGEX,
                     match => `<span class="execute-condition">${match}</span>`)
                 // 其他命令
-                .replace(/\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|teleport|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp|tick)\b/g,
+                .replace(COMMAND_REGEX,
                     match => `<span class="command">${match}</span>`)
                 // 选择器
-                .replace(/@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|nbt|rotation|pitch|yaw)=[^\]]*)*\])?/g,
+                .replace(SELECTOR_REGEX,
                     match => `<span class="selector">${match}</span>`)
                 // 坐标
-                .replace(/(?:^|\s)([~^][-\d]*\.?\d*)/g,
+                .replace(COORDINATE_REGEX,
                     (match, coord) => match.replace(coord, `<span class="coordinates">${coord}</span>`))
                 // 数字和范围
-                .replace(/\b(\d+(?:\.\.\d+)?)\b/g,
+                .replace(NUMBER_REGEX,
                     match => `<span class="number">${match}</span>`)
                 // 布尔值
-                .replace(/\b(true|false)\b/g,
+                .replace(BOOLEAN_REGEX,
                     match => `<span class="boolean">${match}</span>`)
                 // 选择器参数和execute参数
-                .replace(/\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|sort|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g,
+                .replace(PARAMETER_REGEX,
                     match => `<span class="parameter">${match}</span>`)
                 // 维度ID
-                .replace(/\b(overworld|the_nether|the_end)\b/g,
+                .replace(DIMENSION_REGEX,
                     match => `<span class="dimension">${match}</span>`)
                 //游戏规则
-                .replace(/\b(announceAdvancements|blockExplosionDropDecay|commandBlockOutput|commandModificationBlockLimit|disableElytraMovementCheck|disablePlayerMovementCheck|disableRaids|doDaylightCycle|doEntityDrops|doFireTick|doImmediateRespawn|doInsomnia|doLimitedCrafting|doMobLoot|doMobSpawning|doPatrolSpawning|doTileDrops|doTraderSpawning|doVinesSpread|doWardenSpawning|doWeatherCycle|drowningDamage|fallDamage|fireDamage|freezeDamage|functionCommandLimit|keepInventory|maxCommandChainLength|mobGriefing|naturalRegeneration|playersSleepingPercentage|projectilesCanBreakBlocks|pvp|randomTickSpeed|recipesUnlock|respawnBlocksExplode|sendCommandFeedback|showBorderEffect|showCoordinates|showDaysPlayed|showDeathMessages|showRecipeMessages|showTags|spawnRadius|tntExplodes|tntExplosionDropDecay)\b/g,
+                .replace(GAMERULE_REGEX,
                     match => `<span class="gamerule">${match}</span>`)
                 // 其他字符串
-                .replace(/\b(list|add|speed|glowing|true|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g,
+                .replace(STRING_REGEX,
                     match => `<span class="string">${match}</span>`);
 
             return `<div>${line}</div>`;
