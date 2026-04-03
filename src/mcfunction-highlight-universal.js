@@ -1,97 +1,134 @@
-const EXECUTE_REGEX = /\b(execute|run)\b/g;
-const EXECUTE_MODIFIER_REGEX = /\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g;
-const EXECUTE_CONDITION_REGEX = /\b(if|unless)\b/g;
-const COMMAND_REGEX = /\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|teleport|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp|tick)\b/g;
-const SELECTOR_REGEX = /@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|nbt|rotation|pitch|yaw)=[^\]]*)*\])?/g;
-const COORDINATE_REGEX = /(?:^|\s)([~^][-\d]*\.?\d*)/g;
-const NUMBER_REGEX = /\b(\d+(?:\.\.\d+)?)\b/g;
-const BOOLEAN_REGEX = /\b(true|false)\b/g;
-const PARAMETER_REGEX = /\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|sort|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g;
-const DIMENSION_REGEX = /\b(overworld|the_nether|the_end)\b/g;
-const GAMERULE_REGEX = /\b(announceAdvancements|blockExplosionDropDecay|commandBlockOutput|commandModificationBlockLimit|disableElytraMovementCheck|disablePlayerMovementCheck|disableRaids|doDaylightCycle|doEntityDrops|doFireTick|doImmediateRespawn|doInsomnia|doLimitedCrafting|doMobLoot|doMobSpawning|doPatrolSpawning|doTileDrops|doTraderSpawning|doVinesSpread|doWardenSpawning|doWeatherCycle|drowningDamage|fallDamage|fireDamage|freezeDamage|functionCommandLimit|keepInventory|maxCommandChainLength|mobGriefing|naturalRegeneration|playersSleepingPercentage|projectilesCanBreakBlocks|pvp|randomTickSpeed|recipesUnlock|respawnBlocksExplode|sendCommandFeedback|showBorderEffect|showCoordinates|showDaysPlayed|showDeathMessages|showRecipeMessages|showTags|spawnRadius|tntExplodes|tntExplosionDropDecay)\b/g;
-const STRING_REGEX = /\b(list|add|speed|glowing|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g;
+const TOKEN_RULES = [
+    { name: 'selector', regex: /@[apers](?:\[[^\]]*\])?/ },
+    { name: 'command', regex: /\b(execute|run)\b/ },
+    { name: 'execute-modifier', regex: /\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/ },
+    { name: 'execute-condition', regex: /\b(if|unless)\b/ },
+    { name: 'command', regex: /\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|teleport|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp|tick)\b/ },
+    { name: 'parameter', regex: /\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/ },
+    { name: 'dimension', regex: /\b(overworld|the_nether|the_end)\b/ },
+    { name: 'gamerule', regex: /\b(announceAdvancements|blockExplosionDropDecay|commandBlockOutput|commandModificationBlockLimit|disableElytraMovementCheck|disablePlayerMovementCheck|disableRaids|doDaylightCycle|doEntityDrops|doFireTick|doImmediateRespawn|doInsomnia|doLimitedCrafting|doMobLoot|doMobSpawning|doPatrolSpawning|doTileDrops|doTraderSpawning|doVinesSpread|doWardenSpawning|doWeatherCycle|drowningDamage|fallDamage|fireDamage|freezeDamage|functionCommandLimit|keepInventory|maxCommandChainLength|mobGriefing|naturalRegeneration|playersSleepingPercentage|projectilesCanBreakBlocks|pvp|randomTickSpeed|recipesUnlock|respawnBlocksExplode|sendCommandFeedback|showBorderEffect|showCoordinates|showDaysPlayed|showDeathMessages|showRecipeMessages|showTags|spawnRadius|tntExplodes|tntExplosionDropDecay)\b/ },
+    { name: 'boolean', regex: /\b(true|false)\b/ },
+    { name: 'number', regex: /\b(\d+(?:\.\.\d+)?)\b/ },
+    { name: 'coordinates', regex: /(?:^|(?<=\s))[~^]-?\d*\.?\d*/ },
+    { name: 'string', regex: /\b(list|add|speed|glowing|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/ }
+];
+
+function getNextToken(line, cursor) {
+    let bestMatch = null;
+    const subLine = line.slice(cursor);
+
+    TOKEN_RULES.forEach(rule => {
+        const match = rule.regex.exec(subLine);
+
+        if (!match) {
+            return;
+        }
+
+        const candidate = {
+            start: cursor + match.index,
+            end: cursor + match.index + match[0].length,
+            text: match[0],
+            type: rule.name
+        };
+
+        if (!bestMatch || candidate.start < bestMatch.start || (candidate.start === bestMatch.start && candidate.text.length > bestMatch.text.length)) {
+            bestMatch = candidate;
+        }
+    });
+
+    return bestMatch;
+}
+
+function escapeHtml(value) {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function highlightLine(line) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+        return '<div>&nbsp;</div>';
+    }
+
+    if (trimmed.startsWith('#')) {
+        return `<div class="comment">${escapeHtml(line)}</div>`;
+    }
+
+    let cursor = 0;
+    let result = '';
+
+    while (cursor < line.length) {
+        const token = getNextToken(line, cursor);
+
+        if (!token) {
+            result += escapeHtml(line.slice(cursor));
+            break;
+        }
+
+        result += escapeHtml(line.slice(cursor, token.start));
+        result += `<span class="${token.type}">${escapeHtml(token.text)}</span>`;
+        cursor = token.end > cursor ? token.end : cursor + 1;
+    }
+
+    return `<div>${result}</div>`;
+}
 
 const MCFunctionHighlight = {
-    highlight(code) {
-        return code.trimEnd().split('\n').map(line => {
-            const trimmed = line.trim();
-            if (!trimmed) {
-                return '<div>&nbsp;</div>';
-            }
-
-            if (trimmed.startsWith('#')) {
-                return `<div class="comment">${line}</div>`;
-            }
-
-            line = line
-                // execute子命令
-                .replace(EXECUTE_REGEX,
-                    match => `<span class="command">${match}</span>`)
-                // execute修饰子命令
-                .replace(EXECUTE_MODIFIER_REGEX,
-                    match => `<span class="execute-modifier">${match}</span>`)
-                // execute条件子命令
-                .replace(EXECUTE_CONDITION_REGEX,
-                    match => `<span class="execute-condition">${match}</span>`)
-                // 其他命令
-                .replace(COMMAND_REGEX,
-                    match => `<span class="command">${match}</span>`)
-                // 选择器
-                .replace(SELECTOR_REGEX,
-                    match => `<span class="selector">${match}</span>`)
-                // 坐标
-                .replace(COORDINATE_REGEX,
-                    (match, coord) => match.replace(coord, `<span class="coordinates">${coord}</span>`))
-                // 数字和范围
-                .replace(NUMBER_REGEX,
-                    match => `<span class="number">${match}</span>`)
-                // 布尔值
-                .replace(BOOLEAN_REGEX,
-                    match => `<span class="boolean">${match}</span>`)
-                // 选择器参数和execute参数
-                .replace(PARAMETER_REGEX,
-                    match => `<span class="parameter">${match}</span>`)
-                // 维度ID
-                .replace(DIMENSION_REGEX,
-                    match => `<span class="dimension">${match}</span>`)
-                //游戏规则
-                .replace(GAMERULE_REGEX,
-                    match => `<span class="gamerule">${match}</span>`)
-                // 其他字符串
-                .replace(STRING_REGEX,
-                    match => `<span class="string">${match}</span>`);
-
-            return `<div>${line}</div>`;
-        }).join('');
-    },
-
-    // 配置选项
     options: {
         autoUpdate: true
     },
 
-    // 设置选项
+    _initialized: false,
+    _observer: null,
+
+    highlight(code) {
+        return code
+            .trimEnd()
+            .split('\n')
+            .map(highlightLine)
+            .join('');
+    },
+
     configure(options) {
         Object.assign(this.options, options);
     },
 
-    // 浏览器特定功能
     init() {
+        if (this._initialized) {
+            return;
+        }
+
         this.highlightAll();
         if (this.options.autoUpdate) {
             this.observeDOM();
         }
+
+        this._initialized = true;
     },
 
     highlightAll() {
-        if (typeof document !== 'undefined') {
-            document.querySelectorAll('pre > code.language-mcfunction').forEach(element => {
-                this.highlightElement(element);
-            });
+        if (typeof document === 'undefined') {
+            return;
         }
+
+        document.querySelectorAll('pre > code.language-mcfunction').forEach(element => {
+            this.highlightElement(element);
+        });
     },
 
     highlightElement(element) {
+        if (!element || !element.textContent) {
+            return;
+        }
+
+        if (element.closest('.mcfunction-viewer')) {
+            return;
+        }
+
         const code = element.textContent;
         const highlighted = this.highlight(code);
 
@@ -115,23 +152,34 @@ const MCFunctionHighlight = {
     },
 
     observeDOM() {
-        if (typeof document !== 'undefined') {
-            const observer = new MutationObserver(mutations => {
-                mutations.forEach(mutation => {
-                    mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1) {
-                            const elements = node.querySelectorAll('pre > code.language-mcfunction');
-                            elements.forEach(element => this.highlightElement(element));
-                        }
-                    });
+        if (typeof document === 'undefined' || this._observer) {
+            return;
+        }
+
+        this._observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType !== 1) {
+                        return;
+                    }
+
+                    if (node.matches && node.matches('pre > code.language-mcfunction')) {
+                        this.highlightElement(node);
+                    }
+
+                    if (node.querySelectorAll) {
+                        node.querySelectorAll('pre > code.language-mcfunction').forEach(element => {
+                            this.highlightElement(element);
+                        });
+                    }
                 });
             });
+        });
 
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        }
+        this._observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     },
 
     async copyCode(code, button) {
@@ -152,10 +200,8 @@ const MCFunctionHighlight = {
         }
     },
 
-    // Node.js 特定功能
     highlightWithWrapper(code) {
         const highlighted = this.highlight(code);
-        // 在 Node.js 环境下不包含复制按钮
         return `<pre class="mcfunction-viewer"><code class="mcfunction-content">${highlighted}</code></pre>`;
     },
 
@@ -205,8 +251,6 @@ const MCFunctionHighlight = {
 .mcfunction-viewer .boolean { color: #ffaa00; }
 .mcfunction-viewer .gamerule {color:#7fffd4}
 
-/* 只在浏览器环境中显示复制按钮相关样式 */
-${typeof window !== 'undefined' ? `
 .mcfunction-copy-button {
     position: sticky;
     right: 0.5em;
@@ -236,11 +280,10 @@ ${typeof window !== 'undefined' ? `
 
 .mcfunction-viewer:hover .mcfunction-copy-button {
     opacity: 1;
-}` : ''}`;
+}`;
     }
 };
 
-// 浏览器环境自动初始化
 if (typeof window !== 'undefined') {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
@@ -251,19 +294,15 @@ if (typeof window !== 'undefined') {
     }
 }
 
-// 根据环境导出不同的接口
 if (typeof window === 'undefined') {
-    // Node.js 环境
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = MCFunctionHighlight;
     }
 } else {
-    // 浏览器环境
     window.MCFunctionHighlight = MCFunctionHighlight;
 }
 
-// 为了支持 ES modules
 if (typeof exports !== 'undefined') {
-    Object.defineProperty(exports, "__esModule", { value: true });
+    Object.defineProperty(exports, '__esModule', { value: true });
     exports.default = MCFunctionHighlight;
 }
