@@ -1,32 +1,32 @@
 const TOKEN_RULES = [
-    { name: 'selector', regex: /@[apers](?:\[(?:[^\]]*(?:type|distance|limit|sort|x|y|z|dx|dy|dz|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw)=[^\]]*)*\])?/g },
-    { name: 'command', regex: /\b(execute|run)\b/g },
-    { name: 'execute-modifier', regex: /\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/g },
-    { name: 'execute-condition', regex: /\b(if|unless)\b/g },
-    { name: 'command', regex: /\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|teleport|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp|tick)\b/g },
-    { name: 'parameter', regex: /\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/g },
-    { name: 'dimension', regex: /\b(overworld|the_nether|the_end)\b/g },
-    { name: 'gamerule', regex: /\b(announceAdvancements|blockExplosionDropDecay|commandBlockOutput|commandModificationBlockLimit|disableElytraMovementCheck|disablePlayerMovementCheck|disableRaids|doDaylightCycle|doEntityDrops|doFireTick|doImmediateRespawn|doInsomnia|doLimitedCrafting|doMobLoot|doMobSpawning|doPatrolSpawning|doTileDrops|doTraderSpawning|doVinesSpread|doWardenSpawning|doWeatherCycle|drowningDamage|fallDamage|fireDamage|freezeDamage|functionCommandLimit|keepInventory|maxCommandChainLength|mobGriefing|naturalRegeneration|playersSleepingPercentage|projectilesCanBreakBlocks|pvp|randomTickSpeed|recipesUnlock|respawnBlocksExplode|sendCommandFeedback|showBorderEffect|showCoordinates|showDaysPlayed|showDeathMessages|showRecipeMessages|showTags|spawnRadius|tntExplodes|tntExplosionDropDecay)\b/g },
-    { name: 'boolean', regex: /\b(true|false)\b/g },
-    { name: 'number', regex: /\b(\d+(?:\.\.\d+)?)\b/g },
-    { name: 'coordinates', regex: /[~^]-?\d*\.?\d*/g },
-    { name: 'string', regex: /\b(list|add|speed|glowing|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/g }
+    { name: 'selector', regex: /@[apers](?:\[[^\]]*\])?/ },
+    { name: 'command', regex: /\b(execute|run)\b/ },
+    { name: 'execute-modifier', regex: /\b(align|anchored|as|at|facing|in|positioned|rotated|store|result|success)\b/ },
+    { name: 'execute-condition', regex: /\b(if|unless)\b/ },
+    { name: 'command', regex: /\b(advancement|agent|alwaysday|attribute|ban|ban-ip|banlist|bossbar|camera|camerashake|clear|clearspawnpoint|teleport|clone|connect|damage|data|datapack|daylock|debug|deop|difficulty|effect|enchant|event|experience|fill|fillbiome|fog|forceload|function|gamemode|gamerule|give|help|hud|immutableworld|inputpermission|item|jfr|kick|kill|list|locate|loot|me|mobevent|msg|music|op|particle|permission|place|playsound|recipe|reload|ride|say|schedule|scoreboard|setblock|setworldspawn|spawnpoint|spreadplayers|stop|stopsound|summon|tag|tell|tellraw|time|title|tp|transfer|weather|whitelist|xp|tick)\b/ },
+    { name: 'parameter', regex: /\b(type|distance|limit|sort|scores|tag|team|name|nbt|predicate|gamemode|level|advancements|rotation|pitch|yaw|dx|dy|dz|x|y|z|nearest|furthest|random|arbitrary|block|blocks|entity|score|matches|eyes|feet|dimension|storage|bossbar|scale)\b/ },
+    { name: 'dimension', regex: /\b(overworld|the_nether|the_end)\b/ },
+    { name: 'gamerule', regex: /\b(announceAdvancements|blockExplosionDropDecay|commandBlockOutput|commandModificationBlockLimit|disableElytraMovementCheck|disablePlayerMovementCheck|disableRaids|doDaylightCycle|doEntityDrops|doFireTick|doImmediateRespawn|doInsomnia|doLimitedCrafting|doMobLoot|doMobSpawning|doPatrolSpawning|doTileDrops|doTraderSpawning|doVinesSpread|doWardenSpawning|doWeatherCycle|drowningDamage|fallDamage|fireDamage|freezeDamage|functionCommandLimit|keepInventory|maxCommandChainLength|mobGriefing|naturalRegeneration|playersSleepingPercentage|projectilesCanBreakBlocks|pvp|randomTickSpeed|recipesUnlock|respawnBlocksExplode|sendCommandFeedback|showBorderEffect|showCoordinates|showDaysPlayed|showDeathMessages|showRecipeMessages|showTags|spawnRadius|tntExplodes|tntExplosionDropDecay)\b/ },
+    { name: 'boolean', regex: /\b(true|false)\b/ },
+    { name: 'number', regex: /\b(\d+(?:\.\.\d+)?)\b/ },
+    { name: 'coordinates', regex: /(?:^|(?<=\s))[~^]-?\d*\.?\d*/ },
+    { name: 'string', regex: /\b(list|add|speed|glowing|remove|modify|get|set|reset|enable|operation|display|numberformat|setdisplay)\b/ }
 ];
 
 function getNextToken(line, cursor) {
     let bestMatch = null;
+    const subLine = line.slice(cursor);
 
     TOKEN_RULES.forEach(rule => {
-        rule.regex.lastIndex = cursor;
-        const match = rule.regex.exec(line);
+        const match = rule.regex.exec(subLine);
 
         if (!match) {
             return;
         }
 
         const candidate = {
-            start: match.index,
-            end: match.index + match[0].length,
+            start: cursor + match.index,
+            end: cursor + match.index + match[0].length,
             text: match[0],
             type: rule.name
         };
@@ -71,7 +71,7 @@ function highlightLine(line) {
 
         result += escapeHtml(line.slice(cursor, token.start));
         result += `<span class="${token.type}">${escapeHtml(token.text)}</span>`;
-        cursor = token.end;
+        cursor = token.end > cursor ? token.end : cursor + 1;
     }
 
     return `<div>${result}</div>`;
